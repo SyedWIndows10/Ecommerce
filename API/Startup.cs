@@ -1,4 +1,6 @@
+using System.IO;
 using API.DependencyConfig;
+using API.Helpers;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repository;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
@@ -27,6 +30,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRepositories();
+            services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
             services.AddDbContext<StoreContext>(x => x.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
             services.AddSwaggerGen(c =>
@@ -48,6 +52,15 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseStaticFiles();
+            
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "Content")
+                ), RequestPath = "/content"
+            });
 
             app.UseAuthorization();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Core.Interfaces;
+using Infrastructure.Data;
 using Infrastructure.Repository;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,7 @@ namespace API.DependencyConfig
         {
 
             services.AddScoped<IProductRepository,ProductRepository>();
+              services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 
         //     var types = Assembly.Load(new AssemblyName("Infrastructure"))
         //                         .DefinedTypes
